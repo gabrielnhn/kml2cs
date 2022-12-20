@@ -63,9 +63,7 @@ if __name__ == '__main__':
     batch_size = 1
     # cam = args.cam_id
     gpu = select_device(args.gpu_id, batch_size=batch_size)
-    snapshot_path = args.snapshot
-   
-    
+    snapshot_path = args.snapshot 
 
     transformations = transforms.Compose([
         transforms.Resize(448),
@@ -83,7 +81,6 @@ if __name__ == '__main__':
     model.cuda(gpu)
     model.eval()
 
-
     softmax = nn.Softmax(dim=1)
     detector = RetinaFace(gpu_id=0)
     idx_tensor = [idx for idx in range(90)]
@@ -91,7 +88,8 @@ if __name__ == '__main__':
     x=0
   
     # cap = cv2.VideoCapture(cam)
-    cap = cv2.VideoCapture("video.mp4")
+    cap = cv2.VideoCapture("constant.mp4")
+    fourcc = cv2.VideoWriter_fourcc(*'XVID')
 
 
     # Check if the webcam is opened correctly

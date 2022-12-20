@@ -64,8 +64,6 @@ if __name__ == '__main__':
     # cam = args.cam_id
     gpu = select_device(args.gpu_id, batch_size=batch_size)
     snapshot_path = args.snapshot
-   
-    
 
     transformations = transforms.Compose([
         transforms.Resize(448),
@@ -80,11 +78,8 @@ if __name__ == '__main__':
     print('Loading snapshot.')
     saved_state_dict = torch.load(snapshot_path, map_location=torch.device('cpu'))
     model.load_state_dict(saved_state_dict)
-    # model.cuda(gpu)
     model.cpu()
-
     model.eval()
-
 
     softmax = nn.Softmax(dim=1)
     detector = RetinaFace(gpu_id=-1)
