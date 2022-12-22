@@ -135,7 +135,7 @@ if __name__ == '__main__':
                         bbox_height = y_max - y_min
                         face_area = bbox_height * bbox_width
 
-                        area_and_face.append(face_area, box)
+                        area_and_face.append((face_area, box))
 
                     # Only process largest face
                     area_and_face.sort()
