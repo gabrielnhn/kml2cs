@@ -100,7 +100,8 @@ if __name__ == '__main__':
     x=0
   
     cap = cv2.VideoCapture(video_filename)
-    fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    # fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    fourcc = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')
 
 
     # Check if the webcam is opened correctly
@@ -109,7 +110,7 @@ if __name__ == '__main__':
 
     video_out = cv2.VideoWriter(video_output, fourcc, 30, (1280,720))
 
-    with open(gaze_output, "x") as output_file:
+    with open(gaze_output, "w") as output_file:
         with torch.no_grad():
             frame_index = 1
             sucess = True
