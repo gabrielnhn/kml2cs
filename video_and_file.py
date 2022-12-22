@@ -28,9 +28,7 @@ def parse_args():
     parser.add_argument(
         '--snapshot',dest='snapshot', help='Path of model snapshot.', 
         default='output/snapshots/L2CS-gaze360-_loader-180-4/_epoch_55.pkl', type=str)
-    parser.add_argument(
-        '--cam',dest='cam_id', help='Camera device id to use [0]',  
-        default=0, type=int)
+
     parser.add_argument(
         '--arch',dest='arch',help='Network architecture, can be: ResNet18, ResNet34, ResNet50, ResNet101, ResNet152',
         default='ResNet50', type=str)
@@ -75,6 +73,9 @@ if __name__ == '__main__':
     batch_size = 1
     gpu = select_device(args.gpu_id, batch_size=batch_size)
     snapshot_path = args.snapshot 
+    video_filename = args.video_filename
+    video_output = args.video_output
+    gaze_output = args.gaze_output
 
     transformations = transforms.Compose([
         transforms.Resize(448),
@@ -108,7 +109,7 @@ if __name__ == '__main__':
 
     video_out = cv2.VideoWriter(video_output, fourcc, 30, (1280,720))
 
-    with open(gaze_output, "w") as output_file:
+    with open(gaze_output, "x") as output_file:
         with torch.no_grad():
             frame_index = 1
             sucess = True
