@@ -100,7 +100,8 @@ if __name__ == '__main__':
 
 
     with torch.no_grad():
-        while True:
+        sucess = True
+        while sucess:
             success, frame = cap.read()    
             start_fps = time.time()  
            
@@ -160,5 +161,3 @@ if __name__ == '__main__':
 
             # if cv2.waitKey(1) & 0xFF == 27:
             #     break
-            success,frame = cap.read()  
-    
