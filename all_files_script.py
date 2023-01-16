@@ -119,7 +119,7 @@ if __name__ == '__main__':
         gaze_output = basename + "_gaze_data.txt"
 
     
-        cap = cv2.VideoCapture(video_filename)
+        cap = cv2.VideoCapture(os.path.join(video_dir, video_filename))
         fourcc = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')
 
 
