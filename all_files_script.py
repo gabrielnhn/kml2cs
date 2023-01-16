@@ -29,6 +29,10 @@ def parse_args():
     parser.add_argument(
         '--snapshot',dest='snapshot', help='Path of model snapshot.', 
         default='output/snapshots/L2CS-gaze360-_loader-180-4/_epoch_55.pkl', type=str)
+    
+    parser.add_argument(
+        '--arch',dest='arch',help='Network architecture, can be: ResNet18, ResNet34, ResNet50, ResNet101, ResNet152',
+        default='ResNet50', type=str)
 
     parser.add_argument(
         '--video_dir',dest='video_dir', help='Video files dir to be processed',
@@ -74,7 +78,7 @@ if __name__ == '__main__':
     batch_size = 1
     gpu = select_device(args.gpu_id, batch_size=batch_size)
     snapshot_path = args.snapshot 
-    video_filename = args.video_dir
+    video_dir = args.video_dir
 
 
     transformations = transforms.Compose([
@@ -100,6 +104,7 @@ if __name__ == '__main__':
     x=0
 
 
+    video_files = []
     all_files = os.listdir(video_dir)
     for file in all_files:
         if file.endswith(".mp4"):
@@ -110,7 +115,7 @@ if __name__ == '__main__':
     for video_filename in video_files:
 
         basename = video_filename.replace(".mp4", "")
-        # video_output = basename + ""
+        # video_output = basename + "_gaze_video.mp4"
         gaze_output = basename + "_gaze_data.txt"
 
     
