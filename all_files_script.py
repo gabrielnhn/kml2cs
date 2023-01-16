@@ -120,13 +120,12 @@ if __name__ == '__main__':
 
     
         cap = cv2.VideoCapture(video_filename)
-        # fourcc = cv2.VideoWriter_fourcc(*'XVID')
         fourcc = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')
 
 
         # Check if the webcam is opened correctly
         if not cap.isOpened():
-            raise IOError("Cannot open video")
+            raise IOError(f"Cannot open video {video_filename}")
 
         # video_out = cv2.VideoWriter(video_output, fourcc, 30, (1280,720))
 
