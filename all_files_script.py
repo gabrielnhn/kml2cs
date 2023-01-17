@@ -139,8 +139,7 @@ if __name__ == '__main__':
                     try:
                         faces = detector(frame)
                     except NotImplementedError:
-                        success = False
-                        continue
+                        break
 
 
                     for box, landmarks, score in faces:
