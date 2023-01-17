@@ -138,29 +138,31 @@ if __name__ == '__main__':
                     area_and_face = []
 
                     faces = detector(frame)
-                    if faces: 
-                        for box, landmarks, score in faces:
-                            if score < .95:
-                                continue
+                    
+                    for box, landmarks, score in faces:
+                        if score < .95:
+                            continue
 
-                            x_min=int(box[0])
-                            if x_min < 0:
-                                x_min = 0
-                            y_min=int(box[1])
-                            if y_min < 0:
-                                y_min = 0
-                            x_max=int(box[2])
-                            y_max=int(box[3])
-                            bbox_width = x_max - x_min
-                            bbox_height = y_max - y_min
-                            face_area = bbox_height * bbox_width
+                        x_min=int(box[0])
+                        if x_min < 0:
+                            x_min = 0
+                        y_min=int(box[1])
+                        if y_min < 0:
+                            y_min = 0
+                        x_max=int(box[2])
+                        y_max=int(box[3])
+                        bbox_width = x_max - x_min
+                        bbox_height = y_max - y_min
+                        face_area = bbox_height * bbox_width
 
-                            area_and_face.append((face_area, box))
+                        area_and_face.append((face_area, box))
 
                         # Only process largest face
                         area_and_face.sort()
 
-                        print(area_and_face)
+                    if area_and_face:
+
+                        # print(area_and_face)
                         box = area_and_face[0][1]
                         x_min=int(box[0])
                         if x_min < 0:
