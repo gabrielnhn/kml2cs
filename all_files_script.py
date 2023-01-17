@@ -136,9 +136,13 @@ if __name__ == '__main__':
                 success, frame = cap.read()    
                 while sucess:
                     area_and_face = []
+                    try:
+                        faces = detector(frame)
+                    except NotImplementedError:
+                        success = False
+                        continue
 
-                    faces = detector(frame)
-                    
+
                     for box, landmarks, score in faces:
                         if score < .95:
                             continue
