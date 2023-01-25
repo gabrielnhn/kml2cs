@@ -27,4 +27,4 @@ for file in files:
 
         res = numpy.array(frames)
 
-        numpy.save(file.replace("_rgb_face_gaze_data.txt", "_angles.npy"), res)
+        numpy.save(file.replace("_rgb_face_gaze_data.txt", "_angles.npy").replace("new_", ""), res)

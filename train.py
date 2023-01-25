@@ -2,6 +2,7 @@ import autosklearn.classification
 import sklearn.model_selection
 import sklearn.datasets
 import sklearn.metrics
+import pickle
 
 import numpy as np
 
@@ -19,7 +20,10 @@ if __name__ == "__main__":
     y_hat = automl.predict(X_test)
     print("Accuracy score", sklearn.metrics.accuracy_score(y_test, y_hat))
 
-    automl.show_models()
+    show_modes_str=automl.show_models()
+    sprint_statistics_str = automl.sprint_statistics()
+    print(show_modes_str)
+    print(sprint_statistics_str)
 
 
 # save model 
