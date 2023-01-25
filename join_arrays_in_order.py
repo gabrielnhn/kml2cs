@@ -58,7 +58,7 @@ order = [
     "gE_26_s1_2019-03-15T09;25;24+01;00",
     "gE_26_s2_2019-03-15T09;15;51+01;00",
     "gE_26_s3_2019-03-15T09;38;23+01;00",
-    "gE_27_s1_2019-03-07T13;14;28+01;00",
+    "gE_27_s1_2019-03-07T13;18;37+01;00",
     "gE_27_s2_2019-03-07T13;05;11+01;00",
     "gE_28_s1_2019-03-15T10;23;30+01;00",
     "gE_28_s2_2019-03-15T10;12;30+01;00",
@@ -98,8 +98,9 @@ order = [
 
 ]
 
+all_arrays = []
 for prefix in order:
-    all_arrays += list(np.load(prefix + sufix))
+    all_arrays += list(np.load(prefix + sufix, allow_pickle=True))
 
 all_arrays = np.array(all_arrays)
 np.save("ALL_FILES.npy", all_arrays)

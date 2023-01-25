@@ -22,7 +22,7 @@ for file in files:
 
             angle = eval(index_angle[1])
             if angle == None:
-                angle = (69, 420)
+                angle = (42, 42)
             frames.append(numpy.array(angle))
 
         res = numpy.array(frames)
