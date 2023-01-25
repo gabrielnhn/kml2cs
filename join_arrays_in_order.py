@@ -2,7 +2,7 @@ import os
 import numpy as np
 import sys
 
-sufix = sys.argv[2]
+sufix = sys.argv[1]
 
 order = [
     "gA_1_s1_2019-03-08T09;31;15+01;00",
