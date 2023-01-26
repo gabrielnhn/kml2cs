@@ -112,38 +112,19 @@ if __name__ == '__main__':
 
     video_out = cv2.VideoWriter(video_output, fourcc, 30, (1280,720))
 
-    with open(gaze_output, "w") as output_file:
-        with torch.no_grad():
-            frame_index = 1
-            sucess = True
-            success, frame = cap.read()    
-            while sucess:
-                area_and_face = []
+    with torch.no_grad():
+        frame_index = 1
+        sucess = True
+        success, frame = cap.read()    
+        while sucess:
+            area_and_face = []
 
-                faces = detector(frame)
-                if faces: 
-                    for box, landmarks, score in faces:
-                        if score < .95:
-                            continue
+            faces = detector(frame)
+            if faces: 
+                for box, landmarks, score in faces:
+                    if score < .95:
+                        continue
 
-                        x_min=int(box[0])
-                        if x_min < 0:
-                            x_min = 0
-                        y_min=int(box[1])
-                        if y_min < 0:
-                            y_min = 0
-                        x_max=int(box[2])
-                        y_max=int(box[3])
-                        bbox_width = x_max - x_min
-                        bbox_height = y_max - y_min
-                        face_area = bbox_height * bbox_width
-
-                        area_and_face.append((face_area, box))
-
-                    # Only process largest face
-                    area_and_face.sort()
-
-                    box = area_and_face[0][1]
                     x_min=int(box[0])
                     if x_min < 0:
                         x_min = 0
@@ -154,56 +135,74 @@ if __name__ == '__main__':
                     y_max=int(box[3])
                     bbox_width = x_max - x_min
                     bbox_height = y_max - y_min
+                    face_area = bbox_height * bbox_width
 
-                    # Crop image
-                    img = frame[y_min:y_max, x_min:x_max]
-                    img = cv2.resize(img, (224, 224))
-                    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                    im_pil = Image.fromarray(img)
-                    img=transformations(im_pil)
-                    img  = Variable(img).cuda(gpu)
-                    img  = img.unsqueeze(0) 
-                    
-                    # gaze prediction
-                    gaze_pitch, gaze_yaw = model(img)
-                    
-                    pitch_predicted = softmax(gaze_pitch)
-                    yaw_predicted = softmax(gaze_yaw)
-                    
-                    # Get continuous predictions in degrees.
-                    pitch_predicted = torch.sum(pitch_predicted.data[0] * idx_tensor) * 4 - 180
-                    yaw_predicted = torch.sum(yaw_predicted.data[0] * idx_tensor) * 4 - 180
-                    
-                    pitch_predicted= pitch_predicted.cpu().detach().numpy()* np.pi/180.0
-                    yaw_predicted= yaw_predicted.cpu().detach().numpy()* np.pi/180.0
+                    area_and_face.append((face_area, box))
 
-                    
-                    draw_gaze(x_min,y_min,bbox_width, bbox_height,frame,(pitch_predicted,yaw_predicted),color=(0,0,255))
-                    cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (0,255,0), 1)
+                # Only process largest face
+                area_and_face.sort()
 
-                    predicted_values = np.array((pitch_predicted,yaw_predicted))
+                box = area_and_face[0][1]
+                x_min=int(box[0])
+                if x_min < 0:
+                    x_min = 0
+                y_min=int(box[1])
+                if y_min < 0:
+                    y_min = 0
+                x_max=int(box[2])
+                y_max=int(box[3])
+                bbox_width = x_max - x_min
+                bbox_height = y_max - y_min
 
-                    automl_model = pickle.load(open("model", "rb"))
+                # Crop image
+                img = frame[y_min:y_max, x_min:x_max]
+                img = cv2.resize(img, (224, 224))
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                im_pil = Image.fromarray(img)
+                img=transformations(im_pil)
+                img  = Variable(img).cuda(gpu)
+                img  = img.unsqueeze(0) 
+                
+                # gaze prediction
+                gaze_pitch, gaze_yaw = model(img)
+                
+                pitch_predicted = softmax(gaze_pitch)
+                yaw_predicted = softmax(gaze_yaw)
+                
+                # Get continuous predictions in degrees.
+                pitch_predicted = torch.sum(pitch_predicted.data[0] * idx_tensor) * 4 - 180
+                yaw_predicted = torch.sum(yaw_predicted.data[0] * idx_tensor) * 4 - 180
+                
+                pitch_predicted= pitch_predicted.cpu().detach().numpy()* np.pi/180.0
+                yaw_predicted= yaw_predicted.cpu().detach().numpy()* np.pi/180.0
 
-                    prediction = automl_model.predict(predicted_values)
-                    prediction = True
-                    if prediction:
-                        output_str = f"Looking at road elements"
-                        color = (0, 255, 100)
-                    else:
-                        output_str = f"Distracted"
-                        color = (0, 100, 255)
+                
+                draw_gaze(x_min,y_min,bbox_width, bbox_height,frame,(pitch_predicted,yaw_predicted),color=(0,0,255))
+                cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (0,255,0), 1)
 
-                    text_size, _ = cv2.getTextSize(output_str, cv2.FONT_HERSHEY_PLAIN, 4, 4)
-                    text_w, text_h = text_size
+                predicted_values = np.array((pitch_predicted,yaw_predicted))
 
-                    cv2.putText(frame, output_str, (50, 20 + text_h), cv2.FONT_HERSHEY_PLAIN, 4, color, 4)
+                automl_model = pickle.load(open("model", "rb"))
 
+                prediction = automl_model.predict(predicted_values)
+                prediction = True
+                if prediction:
+                    output_str = f"Looking at road elements"
+                    color = (0, 255, 100)
                 else:
-                    predicted_values = None
+                    output_str = f"Distracted"
+                    color = (0, 100, 255)
+
+                text_size, _ = cv2.getTextSize(output_str, cv2.FONT_HERSHEY_PLAIN, 4, 4)
+                text_w, text_h = text_size
+
+                cv2.putText(frame, output_str, (50, 20 + text_h), cv2.FONT_HERSHEY_PLAIN, 4, color, 4)
+
+            else:
+                predicted_values = None
 
 
-                # output_file.write(f"{frame_index}: {predicted_values}\n")
-                video_out.write(frame)
-                success, frame = cap.read()    
-                frame_index += 1
+            # output_file.write(f"{frame_index}: {predicted_values}\n")
+            video_out.write(frame)
+            success, frame = cap.read()    
+            frame_index += 1
