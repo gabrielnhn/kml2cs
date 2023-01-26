@@ -180,12 +180,13 @@ if __name__ == '__main__':
                 draw_gaze(x_min,y_min,bbox_width, bbox_height,frame,(pitch_predicted,yaw_predicted),color=(0,0,255))
                 cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (0,255,0), 1)
 
-                predicted_values = np.array((pitch_predicted,yaw_predicted))
+                angle_values = np.array((pitch_predicted,yaw_predicted))
 
                 automl_model = pickle.load(open("model", "rb"))
 
-                prediction = automl_model.predict(predicted_values)
-                prediction = True
+                print(f"inputs: {angle_values}")
+
+                prediction = automl_model.predict(angle_values)
                 if prediction:
                     output_str = f"Looking at road elements"
                     color = (0, 255, 100)
