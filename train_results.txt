@@ -1,0 +1,50 @@
+Accuracy score 0.9273239899266397
+{
+    10: {'model_id': 10, 'rank': 1, 'cost': 0.08165360209033223, 'ensemble_weight': 0.02, 'data_preprocessor': <autosklearn.pipeline.components.data_preprocessing.DataPreprocessorChoice object at 0x7f7005e3c2e0>, 'balancing': Balancing(random_state=1), 'feature_preprocessor': <autosklearn.pipeline.components.feature_preprocessing.FeaturePreprocessorChoice object at 0x7f70060d50d0>, 'classifier': <autosklearn.pipeline.components.classification.ClassifierChoice object at 0x7f70060d5af0>, 'sklearn_classifier': MLPClassifier(activation='tanh', alpha=0.004046109807229298, beta_1=0.999,
+    beta_2=0.9, hidden_layer_sizes=(17,
+        17,
+        17),
+    learning_rate_init=0.00010292125690429162, max_iter=64,
+    n_iter_no_change=32, random_state=1, validation_fraction=0.0,
+    verbose=0, warm_start=True)
+    },
+    11: {'model_id': 11, 'rank': 2, 'cost': 0.1185195553896562, 'ensemble_weight': 0.08, 'data_preprocessor': <autosklearn.pipeline.components.data_preprocessing.DataPreprocessorChoice object at 0x7f70060d87c0>, 'balancing': Balancing(random_state=1), 'feature_preprocessor': <autosklearn.pipeline.components.feature_preprocessing.FeaturePreprocessorChoice object at 0x7f70060e0cd0>, 'classifier': <autosklearn.pipeline.components.classification.ClassifierChoice object at 0x7f70060e0f40>, 'sklearn_classifier': SGDClassifier(alpha=0.0002346515712987664, average=True, eta0=0.01, loss='log',
+    max_iter=32, penalty='l1', random_state=1,
+    tol=1.3716748930467322e-05, warm_start=True)
+    },
+    12: {'model_id': 12, 'rank': 3, 'cost': 0.072866119198706, 'ensemble_weight': 0.14, 'data_preprocessor': <autosklearn.pipeline.components.data_preprocessing.DataPreprocessorChoice object at 0x7f70060d8df0>, 'balancing': Balancing(random_state=1), 'feature_preprocessor': <autosklearn.pipeline.components.feature_preprocessing.FeaturePreprocessorChoice object at 0x7f7005f8b370>, 'classifier': <autosklearn.pipeline.components.classification.ClassifierChoice object at 0x7f7005f8b2b0>, 'sklearn_classifier': HistGradientBoostingClassifier(early_stopping=True,
+                    l2_regularization=1.7108930238344161e-10,
+                    learning_rate=0.010827728124541558, max_iter=512,
+                    max_leaf_nodes=25, min_samples_leaf=4,
+                    n_iter_no_change=19, random_state=1,
+                    validation_fraction=0.1759114608225653,
+                    warm_start=True)
+    },
+    14: {'model_id': 14, 'rank': 4, 'cost': 0.07272614159512258, 'ensemble_weight': 0.3, 'data_preprocessor': <autosklearn.pipeline.components.data_preprocessing.DataPreprocessorChoice object at 0x7f70060dd910>, 'balancing': Balancing(random_state=1), 'feature_preprocessor': <autosklearn.pipeline.components.feature_preprocessing.FeaturePreprocessorChoice object at 0x7f7004d06f70>, 'classifier': <autosklearn.pipeline.components.classification.ClassifierChoice object at 0x7f700172a0a0>, 'sklearn_classifier': HistGradientBoostingClassifier(early_stopping=False, l2_regularization=1e-10,
+                    learning_rate=0.06339262663805803, max_iter=512,
+                    max_leaf_nodes=26, min_samples_leaf=27,
+                    n_iter_no_change=0, random_state=1,
+                    validation_fraction=None, warm_start=True)
+    },
+    15: {'model_id': 15, 'rank': 5, 'cost': 0.17271680975488368, 'ensemble_weight': 0.06, 'data_preprocessor': <autosklearn.pipeline.components.data_preprocessing.DataPreprocessorChoice object at 0x7f70060e0760>, 'balancing': Balancing(random_state=1), 'feature_preprocessor': <autosklearn.pipeline.components.feature_preprocessing.FeaturePreprocessorChoice object at 0x7f70015bd9d0>, 'classifier': <autosklearn.pipeline.components.classification.ClassifierChoice object at 0x7f70015bdaf0>, 'sklearn_classifier': SGDClassifier(alpha=1.6992296128865824e-07, average=True, eta0=0.01, loss='log',
+    max_iter=256, penalty='l1', random_state=1,
+    tol=1.535384699341134e-05, warm_start=True)
+    },
+    16: {'model_id': 16, 'rank': 6, 'cost': 0.07276761644062879, 'ensemble_weight': 0.4, 'data_preprocessor': <autosklearn.pipeline.components.data_preprocessing.DataPreprocessorChoice object at 0x7f7004d66e80>, 'balancing': Balancing(random_state=1), 'feature_preprocessor': <autosklearn.pipeline.components.feature_preprocessing.FeaturePreprocessorChoice object at 0x7f700158bdc0>, 'classifier': <autosklearn.pipeline.components.classification.ClassifierChoice object at 0x7f700158beb0>, 'sklearn_classifier': HistGradientBoostingClassifier(early_stopping=False,
+                    l2_regularization=3.7641254742702506e-10,
+                    learning_rate=0.06052285540639966, max_iter=512,
+                    max_leaf_nodes=14, min_samples_leaf=17,
+                    n_iter_no_change=0, random_state=1,
+                    validation_fraction=None, warm_start=True)
+    }
+}
+auto-sklearn results:
+Dataset name: 8cc07fd2-9cba-11ed-bba7-c59c5ee3360c
+Metric: accuracy
+Best validation score: 0.927274
+Number of target algorithm runs: 16
+Number of successful target algorithm runs: 7
+Number of crashed target algorithm runs: 0
+Number of target algorithms that exceeded the time limit: 9
+Number of target algorithms that exceeded the memory limit: 0
+
