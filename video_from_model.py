@@ -180,7 +180,7 @@ if __name__ == '__main__':
                 draw_gaze(x_min,y_min,bbox_width, bbox_height,frame,(pitch_predicted,yaw_predicted),color=(0,0,255))
                 cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (0,255,0), 1)
 
-                angle_values = np.array(np.array((pitch_predicted,yaw_predicted)))
+                angle_values = np.array([np.array((pitch_predicted,yaw_predicted))])
 
                 automl_model = pickle.load(open("model", "rb"))
 
