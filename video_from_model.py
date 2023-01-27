@@ -184,9 +184,9 @@ if __name__ == '__main__':
 
                 automl_model = pickle.load(open("model", "rb"))
 
-                print(f"inputs: {angle_values}")
 
                 prediction = automl_model.predict(angle_values)[0]
+                print(f"prediction: {prediction}")
                 if prediction:
                     output_str = f"Looking at road elements"
                     color = (0, 255, 100)
