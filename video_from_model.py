@@ -139,6 +139,8 @@ if __name__ == '__main__':
 
                     area_and_face.append((face_area, box))
 
+
+            if area_and_face:
                 # Only process largest face
                 area_and_face.sort()
 
@@ -182,28 +184,27 @@ if __name__ == '__main__':
 
                 angle_values = np.array([np.array((pitch_predicted,yaw_predicted))])
 
-                automl_model = pickle.load(open("model", "rb"))
+        else:
+            angle_values = np.array([np.array((42, 42))]) # EXCEPTION VALUES
+
+        automl_model = pickle.load(open("model", "rb"))
+
+        prediction = automl_model.predict(angle_values)[0]
+        print(f"prediction: {prediction}")
+        if prediction:
+            output_str = f"Looking at road elements"
+            color = (0, 255, 100)
+        else:
+            output_str = f"Distracted"
+            color = (0, 100, 255)
+
+        text_size, _ = cv2.getTextSize(output_str, cv2.FONT_HERSHEY_PLAIN, 4, 4)
+        text_w, text_h = text_size
+
+        cv2.putText(frame, output_str, (50, 20 + text_h), cv2.FONT_HERSHEY_PLAIN, 4, color, 4)
 
 
-                prediction = automl_model.predict(angle_values)[0]
-                print(f"prediction: {prediction}")
-                if prediction:
-                    output_str = f"Looking at road elements"
-                    color = (0, 255, 100)
-                else:
-                    output_str = f"Distracted"
-                    color = (0, 100, 255)
-
-                text_size, _ = cv2.getTextSize(output_str, cv2.FONT_HERSHEY_PLAIN, 4, 4)
-                text_w, text_h = text_size
-
-                cv2.putText(frame, output_str, (50, 20 + text_h), cv2.FONT_HERSHEY_PLAIN, 4, color, 4)
-
-            else:
-                predicted_values = None
-
-
-            # output_file.write(f"{frame_index}: {predicted_values}\n")
-            video_out.write(frame)
-            success, frame = cap.read()    
-            frame_index += 1
+        # output_file.write(f"{frame_index}: {predicted_values}\n")
+        video_out.write(frame)
+        success, frame = cap.read()    
+        frame_index += 1
