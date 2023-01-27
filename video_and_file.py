@@ -141,7 +141,7 @@ if __name__ == '__main__':
                     # Only process largest face
                     area_and_face.sort()
 
-                    box = area_and_face[0][1]
+                    box = area_and_face[-1][1]
                     x_min=int(box[0])
                     if x_min < 0:
                         x_min = 0
