@@ -204,7 +204,7 @@ if __name__ == '__main__':
             cv2.putText(frame, output_str, (50, 20 + text_h), cv2.FONT_HERSHEY_PLAIN, 4, color, 4)
 
 
-        # output_file.write(f"{frame_index}: {predicted_values}\n")
-        video_out.write(frame)
-        success, frame = cap.read()    
-        frame_index += 1
+            # output_file.write(f"{frame_index}: {predicted_values}\n")
+            video_out.write(frame)
+            success, frame = cap.read()    
+            frame_index += 1
