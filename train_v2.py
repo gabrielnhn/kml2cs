@@ -1,5 +1,5 @@
 import autosklearn.classification
-import autosklearn.experimental
+import autosklearn.experimental.askl2
 import sklearn.model_selection
 import sklearn.datasets
 import sklearn.metrics
