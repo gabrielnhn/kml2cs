@@ -1,4 +1,5 @@
 import autosklearn.classification
+import autosklearn.experimental
 import sklearn.model_selection
 import sklearn.datasets
 import sklearn.metrics
