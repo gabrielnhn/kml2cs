@@ -218,7 +218,7 @@ if __name__ == '__main__':
     ######### GET VALUES FROM ANNOTATION JSONs
     basenames = os.listdir(json_dir)
     files = [(os.path.join(json_dir, file), file) for file in basenames if file.endswith(".json")]
-    print(files)
+    # print(files)
     
     for file, basename in files:
         with open(file) as reading:
@@ -260,11 +260,11 @@ if __name__ == '__main__':
     # get order according to json dir
     prefixes = [file.replace("_rgb_ann_distraction.json", "") for _, file in files] 
     order = prefixes
-    print(order)
+    # print(order)
 
     ### JOIN X ARRAYS
 
-    sufix = "_rgb_face.mp4"
+    sufix = "_rgb_face_gaze_data.npy"
 
     all_arrays_x = []
     for prefix in order:
