@@ -259,6 +259,7 @@ if __name__ == '__main__':
     # get order according to json dir
     prefixes = [basename.replace("_rgb_ann_distraction.json", "") for basename in basenames] 
     order = prefixes
+    print(order)
 
     ### JOIN X ARRAYS
 
