@@ -117,102 +117,102 @@ if __name__ == '__main__':
             video_files.append(os.path.join(video_dir, file))
 
     ########## GET GAZE DIRECTION FROM VIDEOS
-    for video_filename in video_files:
+    # for video_filename in video_files:
 
-        basename = video_filename.replace(".mp4", "")
-        gaze_output = os.path.join(xnpys_dir,  basename + "_gaze_data.npy")
+    #     basename = video_filename.replace(".mp4", "")
+    #     gaze_output = os.path.join(xnpys_dir,  basename + "_gaze_data.npy")
     
-        cap = cv2.VideoCapture(os.path.join(video_dir, video_filename))
-        # fourcc = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')
-        # video_out = cv2.VideoWriter(video_output, fourcc, 30, (1280,720))
+    #     cap = cv2.VideoCapture(os.path.join(video_dir, video_filename))
+    #     # fourcc = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')
+    #     # video_out = cv2.VideoWriter(video_output, fourcc, 30, (1280,720))
 
-        # Check if the webcam is opened correctly
-        if not cap.isOpened():
-            raise IOError(f"Cannot open video {video_filename}")
+    #     # Check if the webcam is opened correctly
+    #     if not cap.isOpened():
+    #         raise IOError(f"Cannot open video {video_filename}")
 
-        values = []
-        with torch.no_grad():
-            frame_index = 1
-            sucess = True
-            success, frame = cap.read()    
-            while sucess:
-                area_and_face = []
-                try:
-                    faces = detector(frame)
-                except NotImplementedError:
+    #     values = []
+    #     with torch.no_grad():
+    #         frame_index = 1
+    #         sucess = True
+    #         success, frame = cap.read()    
+    #         while sucess:
+    #             area_and_face = []
+    #             try:
+    #                 faces = detector(frame)
+    #             except NotImplementedError:
 
-                    values = np.array(values)
-                    np.save(gaze_output, values)
-                    break
+    #                 values = np.array(values)
+    #                 np.save(gaze_output, values)
+    #                 break
 
-                for box, landmarks, score in faces:
-                    if score < .95:
-                        continue
+    #             for box, landmarks, score in faces:
+    #                 if score < .95:
+    #                     continue
 
-                    x_min=int(box[0])
-                    if x_min < 0:
-                        x_min = 0
-                    y_min=int(box[1])
-                    if y_min < 0:
-                        y_min = 0
-                    x_max=int(box[2])
-                    y_max=int(box[3])
-                    bbox_width = x_max - x_min
-                    bbox_height = y_max - y_min
-                    face_area = bbox_height * bbox_width
+    #                 x_min=int(box[0])
+    #                 if x_min < 0:
+    #                     x_min = 0
+    #                 y_min=int(box[1])
+    #                 if y_min < 0:
+    #                     y_min = 0
+    #                 x_max=int(box[2])
+    #                 y_max=int(box[3])
+    #                 bbox_width = x_max - x_min
+    #                 bbox_height = y_max - y_min
+    #                 face_area = bbox_height * bbox_width
 
-                    area_and_face.append((face_area, box))
+    #                 area_and_face.append((face_area, box))
 
-                    # Only process largest face
-                    area_and_face.sort()
+    #                 # Only process largest face
+    #                 area_and_face.sort()
 
-                if area_and_face:
+    #             if area_and_face:
 
-                    box = area_and_face[-1][1]
-                    x_min=int(box[0])
-                    if x_min < 0:
-                        x_min = 0
-                    y_min=int(box[1])
-                    if y_min < 0:
-                        y_min = 0
-                    x_max=int(box[2])
-                    y_max=int(box[3])
-                    bbox_width = x_max - x_min
-                    bbox_height = y_max - y_min
+    #                 box = area_and_face[-1][1]
+    #                 x_min=int(box[0])
+    #                 if x_min < 0:
+    #                     x_min = 0
+    #                 y_min=int(box[1])
+    #                 if y_min < 0:
+    #                     y_min = 0
+    #                 x_max=int(box[2])
+    #                 y_max=int(box[3])
+    #                 bbox_width = x_max - x_min
+    #                 bbox_height = y_max - y_min
 
-                    # Crop image
-                    img = frame[y_min:y_max, x_min:x_max]
-                    img = cv2.resize(img, (224, 224))
-                    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                    im_pil = Image.fromarray(img)
-                    img=transformations(im_pil)
-                    img  = Variable(img).cuda(gpu)
-                    img  = img.unsqueeze(0) 
+    #                 # Crop image
+    #                 img = frame[y_min:y_max, x_min:x_max]
+    #                 img = cv2.resize(img, (224, 224))
+    #                 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    #                 im_pil = Image.fromarray(img)
+    #                 img=transformations(im_pil)
+    #                 img  = Variable(img).cuda(gpu)
+    #                 img  = img.unsqueeze(0) 
                     
-                    # gaze prediction
-                    gaze_pitch, gaze_yaw = model(img)
+    #                 # gaze prediction
+    #                 gaze_pitch, gaze_yaw = model(img)
                     
-                    pitch_predicted = softmax(gaze_pitch)
-                    yaw_predicted = softmax(gaze_yaw)
+    #                 pitch_predicted = softmax(gaze_pitch)
+    #                 yaw_predicted = softmax(gaze_yaw)
                     
-                    # Get continuous predictions in degrees.
-                    pitch_predicted = torch.sum(pitch_predicted.data[0] * idx_tensor) * 4 - 180
-                    yaw_predicted = torch.sum(yaw_predicted.data[0] * idx_tensor) * 4 - 180
+    #                 # Get continuous predictions in degrees.
+    #                 pitch_predicted = torch.sum(pitch_predicted.data[0] * idx_tensor) * 4 - 180
+    #                 yaw_predicted = torch.sum(yaw_predicted.data[0] * idx_tensor) * 4 - 180
                     
-                    pitch_predicted= pitch_predicted.cpu().detach().numpy()* np.pi/180.0
-                    yaw_predicted= yaw_predicted.cpu().detach().numpy()* np.pi/180.0
+    #                 pitch_predicted= pitch_predicted.cpu().detach().numpy()* np.pi/180.0
+    #                 yaw_predicted= yaw_predicted.cpu().detach().numpy()* np.pi/180.0
                     
-                    draw_gaze(x_min,y_min,bbox_width, bbox_height,frame,(pitch_predicted,yaw_predicted),color=(0,0,255))
-                    cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (0,255,0), 1)
+    #                 draw_gaze(x_min,y_min,bbox_width, bbox_height,frame,(pitch_predicted,yaw_predicted),color=(0,0,255))
+    #                 cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (0,255,0), 1)
 
-                    predicted_values = (pitch_predicted,yaw_predicted)
-                else:
-                    predicted_values = (42, 42) # EXCEPTION VALUES
+    #                 predicted_values = (pitch_predicted,yaw_predicted)
+    #             else:
+    #                 predicted_values = (42, 42) # EXCEPTION VALUES
 
-                value = np.array(predicted_values)
-                values.append(value)
-                # output_file.write(f"{frame_index}: {predicted_values}\n")
-                success, frame = cap.read()    
+    #             value = np.array(predicted_values)
+    #             values.append(value)
+    #             # output_file.write(f"{frame_index}: {predicted_values}\n")
+    #             success, frame = cap.read()    
 
 
     ######### GET VALUES FROM ANNOTATION JSONs
@@ -242,7 +242,7 @@ if __name__ == '__main__':
             total_frames = d[first_label]["streams"]["face_camera"]["stream_properties"]["total_frames"]
             ranges = [range(a, b + 1) for (a, b) in frames]
 
-            res = numpy.empty(total_frames, dtype=bool)
+            res = np.empty(total_frames, dtype=bool)
             for i in range(total_frames):
                 res[i] = False
                 for frame_range in ranges:
@@ -252,7 +252,7 @@ if __name__ == '__main__':
             
             out_file = basename.replace("_rgb_ann_distraction.json", "_looking_road_label.npy")
             out_file = os.path.join(ynpys_dir, out_file) 
-            numpy.save(out_file, res)
+            np.save(out_file, res)
 
 
     ###### JOIN ARRAYS
