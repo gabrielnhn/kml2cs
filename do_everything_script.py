@@ -272,7 +272,7 @@ if __name__ == '__main__':
         all_arrays_x += list(np.load(array_file, allow_pickle=True))
 
     all_arrays_x = np.array(all_arrays_x)
-    np.save(all_arrays_x, os.path.join(xnpys_dir, "ALL_FILES_X.npy"))
+    np.save(os.path.join(xnpys_dir, "ALL_FILES_X.npy"), all_arrays_x)
 
     ### JOIN y ARRAYS
 
@@ -284,6 +284,6 @@ if __name__ == '__main__':
         all_arrays_y += list(np.load(array_file, allow_pickle=True))
 
     all_arrays_y = np.array(all_arrays_y)
-    np.save(all_arrays_y, os.path.join(xnpys_dir, "ALL_FILES_y.npy"))
+    np.save(os.path.join(xnpys_dir, "ALL_FILES_y.npy"), all_arrays_y)
 
 
