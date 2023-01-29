@@ -276,7 +276,7 @@ if __name__ == '__main__':
 
     ### JOIN y ARRAYS
 
-    sufix = "_rgb_face.mp4"
+    sufix = "_looking_road_label.npy"
 
     all_arrays_y = []
     for prefix in order:
