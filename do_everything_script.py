@@ -119,7 +119,7 @@ if __name__ == '__main__':
     ########## GET GAZE DIRECTION FROM VIDEOS
     # for video_filename in video_files:
 
-    #     basename = video_filename.replace(".mp4", "")
+    #     basename = os.path.basename(video_filename).replace(".mp4", "")
     #     gaze_output = os.path.join(xnpys_dir,  basename + "_gaze_data.npy")
     
     #     cap = cv2.VideoCapture(os.path.join(video_dir, video_filename))
@@ -284,6 +284,6 @@ if __name__ == '__main__':
         all_arrays_y += list(np.load(array_file, allow_pickle=True))
 
     all_arrays_y = np.array(all_arrays_y)
-    np.save(os.path.join(xnpys_dir, "ALL_FILES_y.npy"), all_arrays_y)
+    np.save(os.path.join(ynpys_dir, "ALL_FILES_y.npy"), all_arrays_y)
 
 
