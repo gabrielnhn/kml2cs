@@ -218,7 +218,8 @@ if __name__ == '__main__':
     ######### GET VALUES FROM ANNOTATION JSONs
     basenames = os.listdir(json_dir)
     files = [(os.path.join(json_dir, file), file) for file in basenames if file.endswith(".json")]
-
+    print(files)
+    
     for file, basename in files:
         with open(file) as reading:
             d = json.load(reading)
