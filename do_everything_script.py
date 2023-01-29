@@ -257,7 +257,7 @@ if __name__ == '__main__':
 
     ###### JOIN ARRAYS
     # get order according to json dir
-    prefixes = [basename.replace("_rgb_ann_distraction.json", "") for basename in basenames] 
+    prefixes = [file.replace("_rgb_ann_distraction.json", "") for _, file in files] 
     order = prefixes
     print(order)
 
