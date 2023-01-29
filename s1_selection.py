@@ -1,3 +1,7 @@
+import os
+import numpy as np
+
+
 train = [
     "gA_1_s1_2019-03-08T09;31;15+01;00",
     "gA_2_s1_2019-03-08T10;01;44+01;00",
@@ -32,8 +36,8 @@ test = [
     "gZ_34_s1_2019-04-08T12;25;28+02;00",
 ]
 
-xnpys_dir = "home/gnhn19/new_train_s1/x"
-ynpys_dir = "home/gnhn19/new_train_s1/y"
+xnpys_dir = "/home/gnhn19/new_training_s1/x"
+ynpys_dir = "/home/gnhn19/new_training_s1/y"
 
 
 

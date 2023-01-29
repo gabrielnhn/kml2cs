@@ -8,13 +8,15 @@ import numpy as np
 
 if __name__ == "__main__":
 
-    X = np.load("ALL_FILES_X.npy", allow_pickle=True)
-    y = np.load("ALL_FILES_Y.npy", allow_pickle=True)
+    X_train = np.load("TRAIN_X.npy", allow_pickle=True)
+    X_test = np.load("TEST_X.npy", allow_pickle=True)
 
-    X_train, X_test, y_train, y_test = sklearn.model_selection.train_test_split(X, y, random_state=42, train_size=0.8)
+    y_train = np.load("TRAIN_y.npy", allow_pickle=True)
+    y_test = np.load("TEST_y.npy", allow_pickle=True)
+
+
     automl = autosklearn.classification.AutoSklearnClassifier()
     automl.fit(X_train, y_train)
-
 
     y_hat = automl.predict(X_test)
     print("Accuracy score", sklearn.metrics.accuracy_score(y_test, y_hat))
@@ -23,7 +25,6 @@ if __name__ == "__main__":
     sprint_statistics_str = automl.sprint_statistics()
     print(show_modes_str)
     print(sprint_statistics_str)
-
 
 # save model 
 filename = 'model'
