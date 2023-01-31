@@ -49,6 +49,10 @@ def parse_args():
         '--gaze_output',dest='gaze_output', help='Gaze data file output',
         default=None, type=str)
 
+    parser.add_argument(
+        '--distraction_model',dest='distraction_model_file', help='KNN MODEL',
+        default=None, type=str)
+
     args = parser.parse_args()
     return args
 
@@ -80,6 +84,7 @@ if __name__ == '__main__':
     video_filename = args.video_filename
     video_output = args.video_output
     gaze_output = args.gaze_output
+    distraction_model_file = args.distraction_model_file
 
     transformations = transforms.Compose([
         transforms.Resize(448),
@@ -102,6 +107,8 @@ if __name__ == '__main__':
     idx_tensor = [idx for idx in range(90)]
     idx_tensor = torch.FloatTensor(idx_tensor).cuda(gpu)
     x=0
+
+    distraction_model = pickle.load(open(distraction_model_file, "rb"))
   
     cap = cv2.VideoCapture(video_filename)
     fourcc = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')
@@ -187,9 +194,8 @@ if __name__ == '__main__':
             else:
                 angle_values = np.array([np.array((42, 42))]) # EXCEPTION VALUES
 
-            automl_model = pickle.load(open("model", "rb"))
 
-            prediction = automl_model.predict(angle_values)[0]
+            prediction = distraction_model.predict(angle_values)[0]
             print(f"prediction: {prediction}")
             if prediction:
                 output_str = f"Looking at road elements"
