@@ -1,0 +1,12 @@
+Fitting svc
+Predicting...
+Accuracy:  0.9250242605797224
+              precision    recall  f1-score   support
+
+       False       0.78      0.74      0.76     11381
+        True       0.95      0.96      0.96     59722
+
+    accuracy                           0.93     71103
+   macro avg       0.87      0.85      0.86     71103
+weighted avg       0.92      0.93      0.92     71103
+
