@@ -188,9 +188,8 @@ if __name__ == '__main__':
                     
                     pitch_predicted= pitch_predicted.cpu().detach().numpy()* np.pi/180.0
                     yaw_predicted= yaw_predicted.cpu().detach().numpy()* np.pi/180.0
-                    
-
                     predicted_values = (yaw_predicted,pitch_predicted)
+                    
                 else:
                     predicted_values = (42, 42) # EXCEPTION VALUES
 
