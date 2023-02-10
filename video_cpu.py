@@ -15,7 +15,7 @@ from utils import select_device, draw_gaze
 from PIL import Image, ImageOps
 
 from face_detection import RetinaFace
-from model import L2CS
+from gaze_estimation_model import L2CS
 
 
 def parse_args():
