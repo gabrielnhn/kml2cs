@@ -1,7 +1,6 @@
 import os
 import numpy as np
 
-
 train = [
     "gA_1_s1_2019-03-08T09;31;15+01;00",
     "gA_2_s1_2019-03-08T10;01;44+01;00",
