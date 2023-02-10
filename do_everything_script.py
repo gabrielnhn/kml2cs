@@ -19,32 +19,30 @@ import json
 def parse_args():
     """Parse input arguments."""
     parser = argparse.ArgumentParser(
-        description='Gaze evalution using model pretrained with L2CS-Net on Gaze360.')
+        description='Prepare DMD using L2CS-Net')
+
     parser.add_argument(
         '--gpu',dest='gpu_id', help='GPU device id to use [0]',
         default="0", type=str)
+
     parser.add_argument(
-        '--snapshot',dest='snapshot', help='Path of model snapshot.', 
+        '--snapshot',dest='snapshot', help='Path of L2CS-Net.', 
         default='output/snapshots/L2CS-gaze360-_loader-180-4/_epoch_55.pkl', type=str)
-    
-    parser.add_argument(
-        '--arch',dest='arch',help='Network architecture, can be: ResNet18, ResNet34, ResNet50, ResNet101, ResNet152',
-        default='ResNet50', type=str)
 
     parser.add_argument(
-        '--video_dir',dest='video_dir', help='Video files dir to be processed',
+        '--video_dir',dest='video_dir', help='Folder where DMD video files are',
         default=None, type=str)
 
     parser.add_argument(
-        '--json_dir',dest='json_dir', help='Json annotations files dir to be processed',
+        '--json_dir',dest='json_dir', help='Folder where DMD annotation JSON files are',
         default=None, type=str)
 
     parser.add_argument(
-        '--xnpys_dir',dest='xnpys_dir', help='X numpy arrays dir',
+        '--xnpys_dir',dest='xnpys_dir', help='Where to store X numpy arrays',
         default=None, type=str)
 
     parser.add_argument(
-        '--ynpys_dir',dest='ynpys_dir', help='y numpy arrays dir',
+        '--ynpys_dir',dest='ynpys_dir', help='Where to store y numpy arrays',
         default=None, type=str)
 
 
@@ -68,7 +66,6 @@ def getArch(arch,bins):
         model = L2CS( torchvision.models.resnet.Bottleneck, [3, 4, 6,  3], bins)
     return model
 
-
 if __name__ == '__main__':
     args = parse_args()
 
@@ -91,12 +88,12 @@ if __name__ == '__main__':
         )
     ])
     
-    model = getArch(arch, 90)
+    gaze_estimation_model = getArch(arch, 90)
     print('Loading snapshot.')
     saved_state_dict = torch.load(snapshot_path)
-    model.load_state_dict(saved_state_dict)
-    model.cuda(gpu)
-    model.eval()
+    gaze_estimation_model.load_state_dict(saved_state_dict)
+    gaze_estimation_model.cuda(gpu)
+    gaze_estimation_model.eval()
 
     softmax = nn.Softmax(dim=1)
     detector = RetinaFace(gpu_id=0)
@@ -180,7 +177,7 @@ if __name__ == '__main__':
                     img  = img.unsqueeze(0) 
                     
                     # gaze prediction
-                    gaze_pitch, gaze_yaw = model(img)
+                    gaze_yaw, gaze_pitch = gaze_estimation_model(img)
                     
                     pitch_predicted = softmax(gaze_pitch)
                     yaw_predicted = softmax(gaze_yaw)
@@ -192,10 +189,8 @@ if __name__ == '__main__':
                     pitch_predicted= pitch_predicted.cpu().detach().numpy()* np.pi/180.0
                     yaw_predicted= yaw_predicted.cpu().detach().numpy()* np.pi/180.0
                     
-                    draw_gaze(x_min,y_min,bbox_width, bbox_height,frame,(pitch_predicted,yaw_predicted),color=(0,0,255))
-                    cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (0,255,0), 1)
 
-                    predicted_values = (pitch_predicted,yaw_predicted)
+                    predicted_values = (yaw_predicted,pitch_predicted)
                 else:
                     predicted_values = (42, 42) # EXCEPTION VALUES
 
@@ -322,7 +317,7 @@ if __name__ == '__main__':
 
 
     ##### FILTER OUT EXCEPTION VALUES
-    
+
     train_indexes = [i for i in range(len(X_train)) if 42 not in X_train[i]]
     test_indexes = [i for i in range(len(X_test)) if 42 not in X_test[i]]
 
