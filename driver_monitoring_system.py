@@ -165,7 +165,7 @@ if __name__ == '__main__':
                 cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (0,255,0), 2)
                 draw_gaze(x_min,y_min,bbox_width, bbox_height,frame,(yaw_predicted,pitch_predicted),color=(245,179,66), thickness=10, scale=0.6)
 
-                angle_values = np.array([np.array((pitch_predicted,yaw_predicted))])
+                angle_values = np.array([np.array((yaw_predicted,pitch_predicted))])
 
             #### Process output:
 
