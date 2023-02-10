@@ -3,24 +3,18 @@ import numpy as np
 import cv2
 import time
 import os
-
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
 from torchvision import transforms
 import torch.backends.cudnn as cudnn
 import torchvision
-
 from PIL import Image
 from utils import select_device, draw_gaze
 from PIL import Image, ImageOps
-
 from face_detection import RetinaFace
 from model import L2CS
-
 import json
-
-
 
 def parse_args():
     """Parse input arguments."""
@@ -74,6 +68,7 @@ def getArch(arch,bins):
         model = L2CS( torchvision.models.resnet.Bottleneck, [3, 4, 6,  3], bins)
     return model
 
+
 if __name__ == '__main__':
     args = parse_args()
 
@@ -86,7 +81,6 @@ if __name__ == '__main__':
     json_dir = args.json_dir
     xnpys_dir = args.xnpys_dir
     ynpys_dir = args.ynpys_dir
-
 
     transformations = transforms.Compose([
         transforms.Resize(448),
@@ -117,108 +111,102 @@ if __name__ == '__main__':
             video_files.append(os.path.join(video_dir, file))
 
     ########## GET GAZE DIRECTION FROM VIDEOS
-    # for video_filename in video_files:
+    for video_filename in video_files:
+        basename = os.path.basename(video_filename).replace(".mp4", "")
+        gaze_output = os.path.join(xnpys_dir,  basename + "_gaze_data.npy")
+        cap = cv2.VideoCapture(os.path.join(video_dir, video_filename))
 
-    #     basename = os.path.basename(video_filename).replace(".mp4", "")
-    #     gaze_output = os.path.join(xnpys_dir,  basename + "_gaze_data.npy")
-    
-    #     cap = cv2.VideoCapture(os.path.join(video_dir, video_filename))
-    #     # fourcc = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')
-    #     # video_out = cv2.VideoWriter(video_output, fourcc, 30, (1280,720))
+        # Check if the video capture was opened correctly
+        if not cap.isOpened():
+            raise IOError(f"Cannot open video {video_filename}")
 
-    #     # Check if the webcam is opened correctly
-    #     if not cap.isOpened():
-    #         raise IOError(f"Cannot open video {video_filename}")
+        values = []
+        with torch.no_grad():
+            frame_index = 1
+            sucess = True
+            success, frame = cap.read()    
+            while sucess:
+                area_and_face = []
+                try:
+                    faces = detector(frame)
+                except NotImplementedError:
 
-    #     values = []
-    #     with torch.no_grad():
-    #         frame_index = 1
-    #         sucess = True
-    #         success, frame = cap.read()    
-    #         while sucess:
-    #             area_and_face = []
-    #             try:
-    #                 faces = detector(frame)
-    #             except NotImplementedError:
+                    values = np.array(values)
+                    np.save(gaze_output, values)
+                    break
 
-    #                 values = np.array(values)
-    #                 np.save(gaze_output, values)
-    #                 break
+                for box, landmarks, score in faces:
+                    if score < .95:
+                        continue
 
-    #             for box, landmarks, score in faces:
-    #                 if score < .95:
-    #                     continue
+                    x_min=int(box[0])
+                    if x_min < 0:
+                        x_min = 0
+                    y_min=int(box[1])
+                    if y_min < 0:
+                        y_min = 0
+                    x_max=int(box[2])
+                    y_max=int(box[3])
+                    bbox_width = x_max - x_min
+                    bbox_height = y_max - y_min
+                    face_area = bbox_height * bbox_width
 
-    #                 x_min=int(box[0])
-    #                 if x_min < 0:
-    #                     x_min = 0
-    #                 y_min=int(box[1])
-    #                 if y_min < 0:
-    #                     y_min = 0
-    #                 x_max=int(box[2])
-    #                 y_max=int(box[3])
-    #                 bbox_width = x_max - x_min
-    #                 bbox_height = y_max - y_min
-    #                 face_area = bbox_height * bbox_width
+                    area_and_face.append((face_area, box))
 
-    #                 area_and_face.append((face_area, box))
+                    # Only process largest face
+                    area_and_face.sort()
 
-    #                 # Only process largest face
-    #                 area_and_face.sort()
+                if area_and_face:
 
-    #             if area_and_face:
+                    box = area_and_face[-1][1]
+                    x_min=int(box[0])
+                    if x_min < 0:
+                        x_min = 0
+                    y_min=int(box[1])
+                    if y_min < 0:
+                        y_min = 0
+                    x_max=int(box[2])
+                    y_max=int(box[3])
+                    bbox_width = x_max - x_min
+                    bbox_height = y_max - y_min
 
-    #                 box = area_and_face[-1][1]
-    #                 x_min=int(box[0])
-    #                 if x_min < 0:
-    #                     x_min = 0
-    #                 y_min=int(box[1])
-    #                 if y_min < 0:
-    #                     y_min = 0
-    #                 x_max=int(box[2])
-    #                 y_max=int(box[3])
-    #                 bbox_width = x_max - x_min
-    #                 bbox_height = y_max - y_min
-
-    #                 # Crop image
-    #                 img = frame[y_min:y_max, x_min:x_max]
-    #                 img = cv2.resize(img, (224, 224))
-    #                 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    #                 im_pil = Image.fromarray(img)
-    #                 img=transformations(im_pil)
-    #                 img  = Variable(img).cuda(gpu)
-    #                 img  = img.unsqueeze(0) 
+                    # Crop image
+                    img = frame[y_min:y_max, x_min:x_max]
+                    img = cv2.resize(img, (224, 224))
+                    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                    im_pil = Image.fromarray(img)
+                    img=transformations(im_pil)
+                    img  = Variable(img).cuda(gpu)
+                    img  = img.unsqueeze(0) 
                     
-    #                 # gaze prediction
-    #                 gaze_pitch, gaze_yaw = model(img)
+                    # gaze prediction
+                    gaze_pitch, gaze_yaw = model(img)
                     
-    #                 pitch_predicted = softmax(gaze_pitch)
-    #                 yaw_predicted = softmax(gaze_yaw)
+                    pitch_predicted = softmax(gaze_pitch)
+                    yaw_predicted = softmax(gaze_yaw)
                     
-    #                 # Get continuous predictions in degrees.
-    #                 pitch_predicted = torch.sum(pitch_predicted.data[0] * idx_tensor) * 4 - 180
-    #                 yaw_predicted = torch.sum(yaw_predicted.data[0] * idx_tensor) * 4 - 180
+                    # Get continuous predictions in degrees.
+                    pitch_predicted = torch.sum(pitch_predicted.data[0] * idx_tensor) * 4 - 180
+                    yaw_predicted = torch.sum(yaw_predicted.data[0] * idx_tensor) * 4 - 180
                     
-    #                 pitch_predicted= pitch_predicted.cpu().detach().numpy()* np.pi/180.0
-    #                 yaw_predicted= yaw_predicted.cpu().detach().numpy()* np.pi/180.0
+                    pitch_predicted= pitch_predicted.cpu().detach().numpy()* np.pi/180.0
+                    yaw_predicted= yaw_predicted.cpu().detach().numpy()* np.pi/180.0
                     
-    #                 draw_gaze(x_min,y_min,bbox_width, bbox_height,frame,(pitch_predicted,yaw_predicted),color=(0,0,255))
-    #                 cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (0,255,0), 1)
+                    draw_gaze(x_min,y_min,bbox_width, bbox_height,frame,(pitch_predicted,yaw_predicted),color=(0,0,255))
+                    cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (0,255,0), 1)
 
-    #                 predicted_values = (pitch_predicted,yaw_predicted)
-    #             else:
-    #                 predicted_values = (42, 42) # EXCEPTION VALUES
+                    predicted_values = (pitch_predicted,yaw_predicted)
+                else:
+                    predicted_values = (42, 42) # EXCEPTION VALUES
 
-    #             value = np.array(predicted_values)
-    #             values.append(value)
-    #             # output_file.write(f"{frame_index}: {predicted_values}\n")
-    #             success, frame = cap.read()    
+                value = np.array(predicted_values)
+                values.append(value)
+                success, frame = cap.read()    
 
 
     ######### GET VALUES FROM ANNOTATION JSONs
     basenames = os.listdir(json_dir)
     files = [(os.path.join(json_dir, file), file) for file in basenames if file.endswith(".json")]
-    # print(files)
     
     for file, basename in files:
         with open(file) as reading:
@@ -255,35 +243,96 @@ if __name__ == '__main__':
             out_file = os.path.join(ynpys_dir, out_file) 
             np.save(out_file, res)
 
-
-    ###### JOIN ARRAYS
-    # get order according to json dir
-    prefixes = [file.replace("_rgb_ann_distraction.json", "") for _, file in files] 
-    order = prefixes
-    # print(order)
+    train = [
+        "gA_1_s1_2019-03-08T09;31;15+01;00",
+        "gA_2_s1_2019-03-08T10;01;44+01;00",
+        "gA_3_s1_2019-03-08T10;27;38+01;00",
+        "gA_4_s1_2019-03-13T10;36;15+01;00",
+        "gA_5_s1_2019-03-08T10;57;00+01;00",
+        "gB_6_s1_2019-03-11T13;55;14+01;00",
+        "gB_7_s1_2019-03-11T14;22;01+01;00",
+        "gB_8_s1_2019-03-11T15;01;33+01;00",
+        "gB_9_s1_2019-03-07T16;36;24+01;00",
+        "gB_10_s1_2019-03-11T15;24;54+01;00",
+        "gC_11_s1_2019-03-04T09;33;18+01;00",
+        "gC_12_s1_2019-03-13T10;23;45+01;00",
+        "gC_13_s1_2019-03-04T10;26;12+01;00",
+        "gC_14_s1_2019-03-04T11;56;20+01;00",
+        "gC_15_s1_2019-03-04T11;24;57+01;00",
+        "gF_21_s1_2019-03-05T09;48;30+01;00",
+        "gF_22_s1_2019-03-04T14;54;55+01;00",
+        "gF_23_s1_2019-03-04T16;21;10+01;00",
+        "gF_24_s1_2019-03-04T15;26;10+01;00",
+        "gF_25_s1_2019-03-04T15;53;22+01;00",
+    ]
+    test = [
+        "gE_26_s1_2019-03-15T09;25;24+01;00",
+        "gE_27_s1_2019-03-07T13;18;37+01;00",
+        "gE_28_s1_2019-03-15T10;23;30+01;00",
+        "gE_29_s1_2019-03-15T13;58;00+01;00",
+        "gE_30_s1_2019-03-15T10;58;06+01;00",
+        "gZ_31_s1_2019-04-08T09;48;48+02;00",
+        "gZ_32_s1_2019-04-08T12;01;26+02;00",
+        "gZ_33_s1_2019-04-08T10;08;19+02;00",
+        "gZ_34_s1_2019-04-08T12;25;28+02;00",
+    ]
 
     ### JOIN X ARRAYS
-
     sufix = "_rgb_face_gaze_data.npy"
 
-    all_arrays_x = []
-    for prefix in order:
-        array_file = os.path.join(xnpys_dir, prefix + sufix) 
-        all_arrays_x += list(np.load(array_file, allow_pickle=True))
+    #Train
 
-    all_arrays_x = np.array(all_arrays_x)
-    np.save(os.path.join(xnpys_dir, "ALL_FILES_X.npy"), all_arrays_x)
+    X_train = []
+    for prefix in train:
+        array_file = os.path.join(xnpys_dir, prefix + sufix) 
+        X_train += list(np.load(array_file, allow_pickle=True))
+
+    X_train = np.array(X_train)
+
+    #Test
+
+    X_test = []
+    for prefix in test:
+        array_file = os.path.join(xnpys_dir, prefix + sufix) 
+        X_test += list(np.load(array_file, allow_pickle=True))
+
+    X_test = np.array(X_test)
+
 
     ### JOIN y ARRAYS
-
     sufix = "_looking_road_label.npy"
 
-    all_arrays_y = []
-    for prefix in order:
+    #Train
+
+    y_train = []
+    for prefix in train:
         array_file = os.path.join(ynpys_dir, prefix + sufix) 
-        all_arrays_y += list(np.load(array_file, allow_pickle=True))
+        y_train += list(np.load(array_file, allow_pickle=True))
 
-    all_arrays_y = np.array(all_arrays_y)
-    np.save(os.path.join(ynpys_dir, "ALL_FILES_y.npy"), all_arrays_y)
+    y_train = np.array(y_train)
+
+    #Test
+
+    y_test = []
+    for prefix in test:
+        array_file = os.path.join(ynpys_dir, prefix + sufix) 
+        y_test += list(np.load(array_file, allow_pickle=True))
+
+    y_test = np.array(y_test)
 
 
+    ##### FILTER OUT EXCEPTION VALUES
+    
+    train_indexes = [i for i in range(len(X_train)) if 42 not in X_train[i]]
+    test_indexes = [i for i in range(len(X_test)) if 42 not in X_test[i]]
+
+    X_train =  X_train[train_indexes]
+    X_test =  X_test[test_indexes]
+
+    y_train =  y_train[train_indexes]
+    y_test =  y_test[test_indexes]
+
+    np.save(os.path.join(ynpys_dir, "TRAIN_y.npy"), y_train)
+    np.save(os.path.join(ynpys_dir, "TEST_y.npy"), y_test)
+    np.save(os.path.join(xnpys_dir, "TRAIN_X.npy"), X_train)
+    np.save(os.path.join(xnpys_dir, "TEST_X.npy"), X_test)
