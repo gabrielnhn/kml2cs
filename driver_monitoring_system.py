@@ -122,7 +122,7 @@ if __name__ == '__main__':
                     face_area = bbox_height * bbox_width
                     area_and_face.append((face_area, box))
 
-            if faces: # If a face was recognized in the picture
+            if area_and_face: # If a face was recognized in the picture
 
                 # Only process largest face
                 area_and_face.sort()
