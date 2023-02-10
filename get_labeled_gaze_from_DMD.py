@@ -10,7 +10,7 @@ from torchvision import transforms
 import torch.backends.cudnn as cudnn
 import torchvision
 from PIL import Image
-from utils import select_device, draw_gaze
+from gaze_utils import select_device, draw_gaze
 from PIL import Image, ImageOps
 from face_detection import RetinaFace
 from gaze_estimation_model import L2CS

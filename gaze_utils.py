@@ -35,7 +35,7 @@ def angular(gaze, label):
   total = np.sum(gaze * label)
   return np.arccos(min(total/(np.linalg.norm(gaze)* np.linalg.norm(label)), 0.9999999))*180/np.pi
 
-def draw_gaze(a,b,c,d,image_in, pitchyaw, thickness=2, color=(255, 255, 0),scale=1.0):
+def draw_gaze(a,b,c,d,image_in, yawpitch, thickness=9, color=(255, 255, 0),scale=1.0):
     """Draw gaze angle on given image with a given eye positions."""
     image_out = image_in
     (h, w) = image_in.shape[:2]
@@ -43,8 +43,8 @@ def draw_gaze(a,b,c,d,image_in, pitchyaw, thickness=2, color=(255, 255, 0),scale
     pos = (int(a+c / 2.0), int( b+d / 2.75))
     if len(image_out.shape) == 2 or image_out.shape[2] == 1:
         image_out = cv2.cvtColor(image_out, cv2.COLOR_GRAY2BGR)
-    dx = -length * np.sin(pitchyaw[0]) * np.cos(pitchyaw[1])
-    dy = -length * np.sin(pitchyaw[1])
+    dx = -length * np.sin(yawpitch[0]) * np.cos(yawpitch[1])
+    dy = -length * np.sin(yawpitch[1])
     cv2.arrowedLine(image_out, tuple(np.round(pos).astype(np.int32)),
                    tuple(np.round([pos[0] + dx, pos[1] + dy]).astype(int)), color,
                    thickness, cv2.LINE_AA, tipLength=0.18)
