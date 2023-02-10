@@ -1,3 +1,10 @@
+"""
+Script used to get labeled gaze angle data from
+Driver Monitoring Dataset rgb_face videos and annotations.
+Request access to the dataset at https://dmd.vicomtech.org/
+"""
+
+
 import argparse
 import numpy as np
 import cv2
