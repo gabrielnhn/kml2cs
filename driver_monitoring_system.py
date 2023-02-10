@@ -1,6 +1,6 @@
 """
-    Caption a video of driving footage, according to whether
-    the driver is looking at road elements or not.
+Caption a video of driving footage, according to whether
+the driver is looking at road elements or not.
 """
 
 import torch
