@@ -122,7 +122,7 @@ if __name__ == '__main__':
                     face_area = bbox_height * bbox_width
                     area_and_face.append((face_area, box))
 
-            if area_and_face: # If a face was recognized in the picture
+            if faces: # If a face was recognized in the picture
 
                 # Only process largest face
                 area_and_face.sort()
@@ -167,12 +167,9 @@ if __name__ == '__main__':
 
                 angle_values = np.array([np.array((pitch_predicted,yaw_predicted))])
 
-            else: # no valid face
-                angle_values = None
-
             #### Process output:
 
-            if angle_values == None:
+            if not faces:
                 output_str = "???"
                 color = (158, 30, 75)
 
