@@ -50,7 +50,6 @@ if __name__ == '__main__':
     args = parse_args()
 
     cudnn.enabled = True
-    arch=args.arch
     batch_size = 1
     gpu = select_device(args.gpu_id, batch_size=batch_size)
     gaze_model_path = args.gaze_model 
