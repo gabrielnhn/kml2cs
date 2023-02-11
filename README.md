@@ -11,6 +11,6 @@ pip install -r requirements.txt
 
 #### Run the monitoring system:
 ```bash
-python3 driver_monitoring_system.py --gaze_model ./models/L2CSNet_gaze360.pkl --gpu 0 --video_source {{SOURCE}} --video_output {{OUTPUT}} --attention_model ./models/gnb.pkl
+python3 driver_monitoring_system.py --gaze_model ./models/L2CSNet_gaze360.pkl --gpu 0 --video_source {{SOURCE}} --video_output {{OUTPUT}} --distraction_model ./models/gnb.pkl
 ```
 
