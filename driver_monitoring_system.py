@@ -169,7 +169,7 @@ if __name__ == '__main__':
 
             #### Process output:
 
-            if not faces:
+            if not area_and_face:
                 output_str = "???"
                 color = (158, 30, 75)
 
