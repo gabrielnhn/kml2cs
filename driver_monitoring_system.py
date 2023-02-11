@@ -171,7 +171,7 @@ if __name__ == '__main__':
 
             if not area_and_face:
                 output_str = "???"
-                color = (158, 30, 75)
+                color = (255, 255, 255)
 
             else:
                 prediction = distraction_model.predict(angle_values)[0]
