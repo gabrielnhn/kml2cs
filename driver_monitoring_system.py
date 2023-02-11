@@ -39,7 +39,7 @@ def parse_args():
         '--video_output',dest='video_output', help='Video file output',
         default=None, type=str)
     parser.add_argument(
-        '--distraction_model',dest='distraction_model_file', help='Visual distraction classifier .pkl',
+        '--attention_model',dest='attention_model_file', help='Visual attention classifier .pkl',
         default=None, type=str)
 
     args = parser.parse_args()
@@ -55,7 +55,7 @@ if __name__ == '__main__':
     gaze_model_path = args.gaze_model 
     video_filename = args.video_filename
     video_output = args.video_output
-    distraction_model_file = args.distraction_model_file
+    attention_model_file = args.attention_model_file
 
     transformations = transforms.Compose([
         transforms.Resize(448),
@@ -79,7 +79,7 @@ if __name__ == '__main__':
     idx_tensor = [idx for idx in range(90)]
     idx_tensor = torch.FloatTensor(idx_tensor).cuda(gpu)
 
-    distraction_model = pickle.load(open(distraction_model_file, "rb"))
+    attention_model = pickle.load(open(distraction_model_file, "rb"))
   
     cap = cv2.VideoCapture(video_filename)
     fourcc = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')
@@ -174,7 +174,7 @@ if __name__ == '__main__':
                 color = (255, 255, 255)
 
             else:
-                prediction = distraction_model.predict(angle_values)[0]
+                prediction = attention_model.predict(angle_values)[0]
                 if prediction == True:
                     output_str = f"Looking at road elements"
                     color = (0, 255, 100)
